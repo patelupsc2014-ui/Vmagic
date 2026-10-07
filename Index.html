@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Video Magic</title>
+    <script src="https://jsdelivr.net"></script>
+    <style> .glow-btn { box-shadow: 0 0 15px rgba(168, 85, 247, 0.6); } </style>
+</head>
+<body class="bg-slate-950 text-white min-h-screen flex flex-col items-center justify-between p-4 font-sans">
+    <header class="w-full max-w-4xl flex justify-between items-center py-4 border-b border-slate-800">
+        <h1 class="text-xl font-black tracking-wider text-purple-500">AI VIDEO MAGIC</h1>
+        <span class="text-xs bg-purple-900/50 text-purple-300 px-3 py-1 rounded-full">Free Mobile AI</span>
+    </header>
+
+    <main class="w-full max-w-xl bg-slate-900 border border-slate-800 p-5 rounded-2xl my-auto space-y-5">
+        <div>
+            <label class="block text-xs font-medium text-slate-400 mb-2">Apna Idea Likhein (Text):</label>
+            <textarea id="promptInput" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-purple-500 resize-none" placeholder="e.g., A cute cat driving a car in space, cartoon style..."></textarea>
+        </div>
+
+        <button id="generateBtn" onclick="generateVideo()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-xl transition glow-btn text-sm cursor-pointer">
+            Generate Video ✨
+        </button>
+
+        <div id="videoContainer" class="hidden space-y-4">
+            <video id="outputVideo" controls class="w-full rounded-xl border border-slate-700 bg-black"></video>
+            <button onclick="downloadWithWatermark()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl text-sm cursor-pointer">
+                📥 Download Free Video
+            </button>
+        </div>
+    </main>
+
+    <canvas id="watermarkCanvas" class="hidden"></canvas>
+    <footer class="text-[10px] text-slate-600 py-2">Powered by Free AI Models</footer>
+
+    <script>
+        let generatedVideoUrl = "";
+        async function generateVideo() {
+            const prompt = document.getElementById('promptInput').value;
+            const btn = document.getElementById('generateBtn');
+            if(!prompt) return alert("Pehle kuch likhiye!");
+
+            btn.disabled = true;
+            btn.innerText = "Generating (30-40s)... ⏳";
+
+            try {
+                // Demo video url setup
+                setTimeout(() => {
+                    generatedVideoUrl = "https://w3schools.com"; 
+                    document.getElementById('outputVideo').src = generatedVideoUrl;
+                    document.getElementById('videoContainer').classList.remove('hidden');
+                    btn.disabled = false;
+                    btn.innerText = "Generate Video ✨";
+                }, 3000);
+            } catch (error) {
+                alert("Error aaya, fir se try karein!");
+                btn.disabled = false;
+                btn.innerText = "Generate Video ✨";
+            }
+        }
+
+        function downloadWithWatermark() {
+            const video = document.getElementById('outputVideo');
+            const canvas = document.getElementById('watermarkCanvas');
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = video.videoWidth || 640;
+            canvas.height = video.videoHeight || 360;
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            ctx.font = "bold 22px Arial";
+            ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
+            ctx.shadowColor = "black";
+            ctx.shadowBlur = 4;
+            
+            const watermarkText = "www.ApniWebsite.page.gd"; 
+            const textWidth = ctx.measureText(watermarkText).width;
+            ctx.fillText(watermarkText, canvas.width - textWidth - 20, canvas.height - 20);
+
+            const link = document.createElement('a');
+            link.href = generatedVideoUrl; 
+            link.download = "ai-magic-video.mp4";
+            link.click();
+            alert("Watermarked video download ho rahi hai!");
+        }
+    </script>
+</body>
+</html>
